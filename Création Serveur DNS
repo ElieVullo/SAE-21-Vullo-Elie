@@ -1,0 +1,135 @@
+On commence par installer l'application pour le DNS et à le lancer : 
+
+apt install bind9 dnsutils
+systemctl start bind9
+
+On va ensuite éditer le fichier namedconflocal : 
+
+
+cd /etc/bind
+nano named.conf.local
+
+
+Dans ce fichier on modifie les champs : 
+
+zone "Crow0Industries.fr" {
+        type master;
+        file "/etc/bind/db.Crow0Industries.fr";
+};
+
+On modifie aussi named.conf.options : 
+
+
+nano named.conf.options
+
+
+
+options {
+	directory "/var/cache/bind";
+
+	// If there is a firewall between you and nameservers you want
+	// to talk to, you may need to fix the firewall to allow multiple
+	// ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+	// If your ISP provided one or more IP addresses for stable 
+	// nameservers, you probably want to use them as forwarders.  
+	// Uncomment the following block, and insert the addresses replacing 
+	// the all-0's placeholder.
+
+	forwarders {
+		10.255.255.200;
+	};
+
+	//========================================================================
+	// If BIND logs error messages about the root key being expired,
+	// you will need to update your keys.  See https://www.isc.org/bind-keys
+	//========================================================================
+	dnssec-validation auto;
+
+	listen-on-v6 { any; };
+};
+
+
+On modifie le forwarders
+
+On va ensuite créer le fichier db."NomdenotreEntreprise.fr"
+
+nano db.Crow0Industries.fr
+
+
+On modifie ensuite : 
+
+
+;
+; BIND data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	Crow0Industries.fr. root.Crow0Industries.fr. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+$ORIGIN Crow0Industries.fr.
+@	IN	NS	dns.Crow0Industries.fr.
+@	IN	A	10.214.9.1
+www	IN	A	10.214.9.1
+dns	IN	A	10.214.9.1
+
+
+Une fois toutes ces commandes faites on redémarre le serveur pour enregistrer les modifications : 
+
+systemctl restart bind9
+
+
+
+On peut vérifier la config ensuite avec la commande : 
+
+dig @localhost www.Crow0Industries.fr
+
+Si l'on voit une réponse c'est que le serveur fonctionne hors dans notre cas il ne fonctionnait pas car l'on avait 0 réponse.
+
+On regarde ensuite le fichier resolv.conf
+
+cd /etc
+nano resolv.conf
+
+
+On va modifier dedans le nameserver et on va mettre l'addresse de notre serveur DNS et effacer les autres champs : 
+Cela donne
+
+
+#domain iutbeziers.fr
+#search iutbeziers.fr
+#nameserver 10.255.255.200
+nameserver 10.214.9.1
+
+Une fois cela fait on va redémarrer le serveur : 
+
+systemctl restart bind9
+
+
+On peut vérifier si le DNS fonctionne : 
+
+
+dig @localhost www.Crow0Industries.fr
+
+
+On se rend compte que l'on a maintenant une réponse et que lorsque l'on tape www.Crow0Industries.fr 
+Cela nous amène sur la page HTML de notre site.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

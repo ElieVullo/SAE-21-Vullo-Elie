@@ -1,0 +1,68 @@
+On commence par ssh notre routeur pour taper les commandes directement dans le terminal : 
+
+ssh admin@192.168.88.1
+
+on enlève ensuite tous les filtres du routeur pour le parefeu : 
+
+pour ca on va dans 
+
+ip 
+
+firewall
+
+filter
+
+remove 1
+remove 2
+remove 3
+remove 4
+remove 5
+remove 6
+
+On affiche ensuite les filtres voir s'ils ont bien été enlevé : 
+
+print
+
+On revient ensuite au début on tape donc les commandes : 
+
+..
+
+..
+
+..
+
+interface
+
+On crée ensuite 2 listes pour l'ajout du pare feu ensuite : 
+
+list add name=Ext comment="Untrusted network interfaces (internet, external etc)."
+list add name=Int comment="Untrusted network interfaces (internet, external etc)."
+
+On revient ensuite en arrière : 
+
+..
+
+puis on retourne dans : 
+
+ip 
+
+firewall
+
+filter
+
+et on ajoute ensuite le pare feu sur les lites précédemment crées : 
+
+
+add action=accept chain=forward in-interface-list=Ext protocol=tcp
+add action=accept chain=forward in-interface-list=Int protocol=udp
+add action=accept chain=forward in-interface-list=Ext connection-state=new
+add action=drop chain=input in-interface-list=Int connection-state=new
+
+
+
+
+
+
+
+
+

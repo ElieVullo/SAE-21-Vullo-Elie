@@ -1,0 +1,29 @@
+su
+root
+
+Creation d'une page html
+
+nano site.html
+
+
+
+Une fois cela fait, 
+
+Création d'un serveur Apache
+
+apt install apache2
+cd var/www/html
+cp /home/test/Bureau/site.html html
+cd ..
+cd ..
+cd ..
+cd /etc/apache2/sites-available
+nano 000-default.conf
+On efface le hashtag devant ServerName et l'on met devant Crow0Industries, On modifie aussi DocumentRoot on met devant :      /var/www/html/site.html
+cd ..
+cd ..
+nano hosts 
+Une fois dans cette page, on va modifier "localhost" devant l'addresse 127.0.0.1 et on met à la place Crow0Industries.
+
+Et le serveur apache nous affiche désormais notre page HTML
+
